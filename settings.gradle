@@ -1,0 +1,2 @@
+rootProject.name='KtListExample'
+include ':app',':ktlist'
