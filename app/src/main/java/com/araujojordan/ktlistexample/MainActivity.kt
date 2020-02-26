@@ -17,10 +17,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-        val list = ArrayList<String>()
-        for (i in 0..15) {
-            list.add("RANDOM VALUE $i")
-        }
+
+        val list = ArrayList(listOf("One","Two","Three","Four","Five"))
+
+//        val list = ArrayList<String>()
+//        for (i in 0..15) {
+//            list.add("RANDOM VALUE $i")
+//        }
         index = 100
 
         ktListAdapter = KtList(
