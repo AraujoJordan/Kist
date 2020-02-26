@@ -40,6 +40,8 @@ import androidx.recyclerview.widget.RecyclerView
  * @param headerModifier (Optional) If you want to modifier your header elements, use this param
  * @param emptyView (Optional) If you want to show something if the list is empty (it will always respect the header view)
  * @param endOfScroll (Optional) If you want to implement infinite scrolling, implement this lambda
+ * @param clickListener (Optional) If you want to implement click action in the entire list item, implement this lambda
+ * @param longClickListener (Optional) If you want to implement long click in the entire list item, implement this lambda
  * @param binding (Optional) If you want to implement infinite scrolling, implement this lambda
  */
 class KtList<T>(
@@ -48,8 +50,12 @@ class KtList<T>(
     private var layoutManager: RecyclerView.LayoutManager? = null,
     private var headerLayout: Int? = null,
     private var headerModifier: ((headerView: View) -> Unit)? = null,
-    private var emptyView: Int? = null,
+    private var footerLayout: Int? = null,
+    private var footerModifier: ((footerView: View) -> Unit)? = null,
+    private var emptyLayout: Int? = null,
     private var endOfScroll: (() -> Unit)? = null,
+    private var clickListener: ((item: T, position: Int) -> Unit)? = null,
+    private var longClickListener: ((item: T, position: Int) -> Unit)? = null,
     private var binding: (T, itemView: View) -> Unit
 ) : RecyclerView.Adapter<KtList<T>.ViewHolder>() {
 
@@ -58,6 +64,11 @@ class KtList<T>(
         ITEM,
         EMPTY,
         FOOTER
+    }
+
+    //Copy the list so the outside list changes will not affect this one
+    init {
+        list = list.toMutableList()
     }
 
     //Variable used if the user activate the endOfScroll variable
@@ -96,18 +107,20 @@ class KtList<T>(
         if (endOfScroll != null) recyclerView.addOnScrollListener(endOfScrollListener)
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return when {
-            headerLayout != null && list.isEmpty() && position == 1 -> TYPE.EMPTY.ordinal
-            headerLayout != null && position == 0 -> TYPE.HEADER.ordinal
-            else -> TYPE.ITEM.ordinal
-        }
-    }
-
     /**
-     * Simple function to add one if the KLitst have an header or not
+     * Simple function to add one if the KLitst have an header/footer or not
      */
     private fun incWhenHeaderExist() = if (headerLayout != null) 1 else 0
+
+    /**
+     * Simple function to add one if the KLitst have an header/footer or not
+     */
+    private fun incWhenFooterExist() = if (footerLayout != null) 1 else 0
+
+    /**
+     * Simple function to add one if the KLitst have an empty view or not
+     */
+    private fun incWhenEmptyExist() = if (emptyLayout != null && list.isEmpty()) 1 else 0
 
     /**
      * Use this method to add more elements to the list, it will also handle if you already have
@@ -120,7 +133,7 @@ class KtList<T>(
      * @param itemsToAdd the items that will be added to the displayed list
      */
     fun addItems(itemsToAdd: List<T>) {
-        var newList = ArrayList<T>()
+        val newList = ArrayList<T>()
         newList.addAll(list)
         newList.addAll(itemsToAdd)
         list = newList
@@ -138,7 +151,7 @@ class KtList<T>(
      * @param itemsToRemove the elements that will be removed from the list
      */
     fun removeItems(vararg itemsToRemove: T) {
-        var newList = list.toMutableList()
+        val newList = list.toMutableList()
         newList.removeAll(itemsToRemove)
         list = newList
         notifyDataSetChanged()
@@ -153,11 +166,20 @@ class KtList<T>(
      *
      * @param indexesToRemove the index(es) that will be removed from the list
      */
-    fun removeItemsIndex(vararg indexesToRemove:Int) {
-        var newList = list.toMutableList()
+    fun removeItemsIndex(vararg indexesToRemove: Int) {
+        val newList = list.toMutableList()
         indexesToRemove.forEach { newList.removeAt(it) }
         list = newList
         notifyDataSetChanged()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when {
+            headerLayout != null && list.isEmpty() && position == 1 -> TYPE.EMPTY.ordinal
+            headerLayout != null && position == 0 -> TYPE.HEADER.ordinal
+            footerLayout != null && position == list.size + incWhenEmptyExist() + incWhenHeaderExist() -> TYPE.FOOTER.ordinal
+            else -> TYPE.ITEM.ordinal
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
@@ -166,41 +188,89 @@ class KtList<T>(
                 HeaderHolder(LayoutInflater.from(parent.context), parent)
             TYPE.ITEM.ordinal ->
                 ItemHolder(LayoutInflater.from(parent.context), parent)
-            TYPE.EMPTY.ordinal -> {
+            TYPE.EMPTY.ordinal ->
                 EmptyHolder(LayoutInflater.from(parent.context), parent)
-            }
+            TYPE.FOOTER.ordinal ->
+                FooterHolder(LayoutInflater.from(parent.context), parent)
             else -> ItemHolder(LayoutInflater.from(parent.context), parent)
         }
 
-    override fun getItemCount() = incWhenHeaderExist() + list.size
+    override fun getItemCount() =
+        incWhenHeaderExist() + incWhenEmptyExist() + list.size + incWhenFooterExist()
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         try {
             when (holder) {
                 is ItemHolder -> holder.bind(list[position - incWhenHeaderExist()])
                 is HeaderHolder -> holder.bind()
-                is EmptyHolder -> {} //Do you really need to change an empty view?
-                else -> {
-                    holder.bind(list[position - incWhenHeaderExist()])
-                }
+                is FooterHolder -> holder.bind()
+                is EmptyHolder -> {
+                } //Do you really need to change an empty view?
             }
         } catch (err: Exception) {
         }
     }
 
+
+    @Suppress("UNCHECKED_CAST")
+    val clickListenerAction = View.OnClickListener { view ->
+        try {
+            val itemElement = view?.tag as T
+            val index = list.indexOfFirst { itemElement == it }
+            clickListener?.invoke(itemElement, index)
+        } catch (err: Exception) {
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    val longClickListenerAction = View.OnLongClickListener { view ->
+        try {
+            val itemElement = view?.tag as T
+            val index = list.indexOfFirst { itemElement == it }
+            longClickListener?.invoke(itemElement, index)
+            true
+        } catch (err: Exception) {
+            false
+        }
+    }
+
     open inner class ViewHolder(inflater: LayoutInflater, parent: ViewGroup, holderLayout: Int) :
         RecyclerView.ViewHolder(inflater.inflate(holderLayout, parent, false)) {
-        fun bind(item: T) = binding(item, itemView)
+        fun bind(item: T) {
+            if (clickListener != null || longClickListener != null) {
+                itemView.tag = item
+                if (clickListener != null)
+                    itemView.setOnClickListener(clickListenerAction)
+                else
+                    itemView.setOnClickListener(null)
+                if (longClickListener != null)
+                    itemView.setOnLongClickListener(longClickListenerAction)
+                else
+                    itemView.setOnLongClickListener(null)
+            }
+            binding(item, itemView)
+        }
     }
 
     inner class ItemHolder(inflater: LayoutInflater, parent: ViewGroup) :
         ViewHolder(inflater, parent, layout)
 
     inner class EmptyHolder(inflater: LayoutInflater, parent: ViewGroup) :
-        ViewHolder(inflater, parent, emptyView?:layout)
+        ViewHolder(inflater, parent, emptyLayout ?: layout)
 
     inner class HeaderHolder(inflater: LayoutInflater, parent: ViewGroup) :
         ViewHolder(inflater, parent, headerLayout ?: layout) {
-        fun bind() = headerModifier?.let { it(itemView) }
+        fun bind() = headerModifier?.let {
+            it(itemView)
+            notifyItemChanged(0)
+        }
+    }
+
+    inner class FooterHolder(inflater: LayoutInflater, parent: ViewGroup) :
+        ViewHolder(inflater, parent, footerLayout ?: layout) {
+        fun bind() = footerModifier?.let {
+            it(itemView)
+            notifyItemChanged(itemCount)
+        }
     }
 }
