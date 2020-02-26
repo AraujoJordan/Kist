@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.araujojordan.ktlist.recycleviewLayoutManagers.SupportGridLayoutManager
+import com.araujojordan.ktlist.recycleviewLayoutManagers.SupportLinearLayoutManager
 
 /**
  * Designed and developed by Jordan Lira (@araujojordan)
@@ -38,6 +40,8 @@ import androidx.recyclerview.widget.RecyclerView
  * @param layoutManager (Optional) The type of layout, if you don't put it, ill will be LinearLayout
  * @param headerLayout (Optional) Header Int layout resource reference (ex: R.layout.list_header)
  * @param headerModifier (Optional) If you want to modifier your header elements, use this param
+ * @param footerLayout (Optional) Footer Int layout resource reference (ex: R.layout.list_footer)
+ * @param footerModifier (Optional) If you want to modifier your footer elements, use this param
  * @param emptyView (Optional) If you want to show something if the list is empty (it will always respect the header view)
  * @param endOfScroll (Optional) If you want to implement infinite scrolling, implement this lambda
  * @param clickListener (Optional) If you want to implement click action in the entire list item, implement this lambda
@@ -80,6 +84,8 @@ class KtList<T>(
                 val pastVisibleItems = when (recyclerView.layoutManager) {
                     is LinearLayoutManager -> (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
                     is GridLayoutManager -> (recyclerView.layoutManager as GridLayoutManager).findFirstVisibleItemPosition()
+                    is SupportLinearLayoutManager -> (recyclerView.layoutManager as SupportLinearLayoutManager).findFirstVisibleItemPosition()
+                    is SupportGridLayoutManager -> (recyclerView.layoutManager as SupportGridLayoutManager).findFirstVisibleItemPosition()
                     else -> 3
                 }
                 if (visibleItemCount + pastVisibleItems >= totalItemCount) {
@@ -101,7 +107,7 @@ class KtList<T>(
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         if (recyclerView.layoutManager == null && layoutManager == null)
-            recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
+            recyclerView.layoutManager = SupportLinearLayoutManager(recyclerView.context)
         if (layoutManager != null) recyclerView.layoutManager = layoutManager
 
         if (endOfScroll != null) recyclerView.addOnScrollListener(endOfScrollListener)
@@ -170,6 +176,14 @@ class KtList<T>(
         val newList = list.toMutableList()
         indexesToRemove.forEach { newList.removeAt(it) }
         list = newList
+        notifyDataSetChanged()
+    }
+
+    /**
+     * Safely change list from KtList
+     */
+    fun setList(newList:List<T>) {
+        this.list = ArrayList(newList)
         notifyDataSetChanged()
     }
 
