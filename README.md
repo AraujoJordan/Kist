@@ -39,7 +39,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
             listOf(1,2,3,4,5), //original list
             R.layout.your_item_layout,
             endOfScroll = {
-                ktListAdapter?.addItems(listOf(6,7,8)) //more elements to be add to the list
+                ktList?.addItems(listOf(6,7,8)) //more elements to be add to the list
             }
         ) { item, view ->
         view.yourText.text = item
