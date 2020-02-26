@@ -19,13 +19,14 @@ override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)                    
 
-        val list = listOf("One","Two","Three","Four","Five")
+        val list = listOf("One","Two","Three","Four","Five") //Could be any type of object
         yourRecycleView.adapter = KtList(list,R.layout.your_item_layout) { item, view ->
-            view.yourText.text = item //binding going here (this replace the ViewHolder)
+            view.yourText.text = item //item is an element from the listOf above
         }
 }
 ```
 And that's it. No more Adapter implementations, ViewHolders and others boilerplate to maintain in your code.
+The list of the example is a String, but you can use ANY type of objects instead.
 
 ### Infinite Scrolling implementation
 ```kotlin
@@ -81,6 +82,24 @@ override fun onCreate(savedInstanceState: Bundle?) {
     }
 }
 ```
+
+## All Properties
+```kotlin
+recycleView.adapter = KtList(
+            list, //(Mandatory) List of any type that you will be show (ex: ArrayList<String>, LinkedList<Person>, listOf(1,2,3)...)
+            R.layout.item, //(Mandatory) Item Int layout resource reference (ex: R.layout.item_view)
+            layoutManager = LinearLayoutManager(this), // (Optional) The type of layout, if you don't put it, it will be LinearLayout
+            headerLayout = R.layout.list_header, // (Optional) Header Int layout resource reference (ex: R.layout.list_header)
+            headerModifier = { view -> /** Do Something **/ }, // (Optional) If you want to modifier your header elements, use this param
+            emptyLayout = R.layout.empty,// (Optional) If you want to implement infinite scrolling, implement this lambda
+            footerLayout = R.layout.list_footer, //(Optional) Footer Int layout resource reference (ex: R.layout.list_footer)
+            footerModifier = { view -> /** Do Something **/ }, // (Optional) If you want to modifier your footer elements, use this param
+            endOfScroll = { /** Do Something **/ }, // (Optional) If you want to implement infinite scrolling, implement this lambda
+            clickListener = { item, position -> /** Do Something **/  },// (Optional) If you want to implement click action in the entire list item, implement this lambda
+            longClickListener = { item, position -> /** Do Something **/  }// (Optional) If you want to implement long click action in the entire list item, implement this lambda
+        ) { item, view ->  /** Do Something **/ } // (MANDATORY) The list item binding
+```
+
 ## Installation
 
 #### Step 1. Add the JitPack repository to your project build file 
