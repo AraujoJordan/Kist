@@ -1,7 +1,7 @@
 # KtList
 [![CircleCI](https://circleci.com/gh/AraujoJordan/KtList.svg?style=shield)](https://circleci.com/gh/AraujoJordan/KtList)
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/AraujoJordan/KtList/LICENSE)
-[![Jitpack Enable](https://jitpack.io/v/AraujoJordan/KtList.svg)](https://jitpack.io/#AraujoJordan/KtList/0.0.2)
+[![Jitpack Enable](https://jitpack.io/v/AraujoJordan/KtList.svg)](https://jitpack.io/AraujoJordan/KtList/)
 
 
 KtList is a android library that provides a RecyclerView.Adapter implementation that make easier to implement things like Headers, Footers, Empty Fallbacks, Infinite Scrolling and so on. It will also make it easy to implement the adapter itself as you don't need to implement ViewHolders and others boilerplate methods.
