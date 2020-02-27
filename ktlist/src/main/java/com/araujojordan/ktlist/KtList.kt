@@ -113,6 +113,12 @@ class KtList<T>(
         if (endOfScroll != null) recyclerView.addOnScrollListener(endOfScrollListener)
     }
 
+    fun getItemByIndex(index: Int) = list[index]
+
+    fun first(searchFor:(item:T) -> Boolean) = list.firstOrNull { searchFor(it) }
+    fun filter(searchFor:(item:T) -> Boolean) = list.filter { searchFor(it) }
+
+
     /**
      * Simple function to add one if the KLitst have an header/footer or not
      */
@@ -182,7 +188,7 @@ class KtList<T>(
     /**
      * Safely change list from KtList
      */
-    fun setList(newList:List<T>) {
+    fun setList(newList: List<T>) {
         this.list = ArrayList(newList)
         notifyDataSetChanged()
     }
