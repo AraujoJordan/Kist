@@ -56,7 +56,7 @@ class KtList<T>(
     private var headerModifier: ((headerView: View) -> Unit)? = null,
     private var footerLayout: Int? = null,
     private var footerModifier: ((footerView: View) -> Unit)? = null,
-    private var emptyLayout: Int? = null,
+    var emptyLayout: Int? = null,
     private var endOfScroll: (() -> Unit)? = null,
     private var clickListener: ((item: T, position: Int) -> Unit)? = null,
     private var longClickListener: ((item: T, position: Int) -> Unit)? = null,
