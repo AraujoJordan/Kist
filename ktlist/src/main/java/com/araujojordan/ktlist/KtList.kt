@@ -120,25 +120,25 @@ class KtList<T>(
 
 
     /**
-     * Simple function to add one if the KLitst have an header/footer or not
+     * Simple function to count the existence of the header
      */
-    private fun incWhenHeaderExist() = if (headerLayout != null) 1 else 0
+    private fun countHeader() = if (headerLayout != null) 1 else 0
 
     /**
-     * Simple function to add one if the KLitst have an header/footer or not
+     * Simple function to count the existence of the footer
      */
-    private fun incWhenFooterExist() = if (footerLayout != null) 1 else 0
+    private fun countFooter() = if (footerLayout != null) 1 else 0
 
     /**
-     * Simple function to add one if the KLitst have an empty view or not
+     * Simple function to count the existence of the empty view
      */
-    private fun incWhenEmptyExist() = if (emptyLayout != null && list.isEmpty()) 1 else 0
+    private fun countEmpty() = if (emptyLayout != null && list.isEmpty()) 1 else 0
 
     /**
      * Use this method to add more elements to the list, it will also handle if you already have
      * some elements and just want add more. This will also prevent crashes of
      * IndexOutOfBoundsException of the validateViewHolderForOffsetPosition() method.
-     * WARNING: DONT CHANGE THE LIST DIRECTLY!
+     * WARNING: NEVER CHANGE THE LIST DIRECTLY, CHANGE THE REFERENCE!
      *
      * See more at: https://medium.com/@nhancv/android-fix-java-lang-indexoutofboundsexception-inconsistency-detected-invalid-item-70e9b3b489a2
      *
@@ -156,7 +156,7 @@ class KtList<T>(
     /**
      * Use this method to remove one or more elements to the list, it will also prevent crashes of
      * IndexOutOfBoundsException of the validateViewHolderForOffsetPosition() method.
-     * WARNING: DONT CHANGE THE LIST DIRECTLY!
+     * WARNING: NEVER CHANGE THE LIST DIRECTLY, CHANGE THE REFERENCE!
      *
      * See more at: https://medium.com/@nhancv/android-fix-java-lang-indexoutofboundsexception-inconsistency-detected-invalid-item-70e9b3b489a2
      *
@@ -172,7 +172,7 @@ class KtList<T>(
     /**
      * Use this method to remove one or more elements to the list, it will also prevent crashes of
      * IndexOutOfBoundsException of the validateViewHolderForOffsetPosition() method.
-     * WARNING: DONT CHANGE THE LIST DIRECTLY!
+     * WARNING: NEVER CHANGE THE LIST DIRECTLY, CHANGE THE REFERENCE!
      *
      * See more at: https://medium.com/@nhancv/android-fix-java-lang-indexoutofboundsexception-inconsistency-detected-invalid-item-70e9b3b489a2
      *
@@ -197,7 +197,7 @@ class KtList<T>(
         return when {
             headerLayout != null && list.isEmpty() && position == 1 -> TYPE.EMPTY.ordinal
             headerLayout != null && position == 0 -> TYPE.HEADER.ordinal
-            footerLayout != null && position == list.size + incWhenEmptyExist() + incWhenHeaderExist() -> TYPE.FOOTER.ordinal
+            footerLayout != null && position == list.size + countEmpty() + countHeader() -> TYPE.FOOTER.ordinal
             else -> TYPE.ITEM.ordinal
         }
     }
@@ -216,12 +216,12 @@ class KtList<T>(
         }
 
     override fun getItemCount() =
-        incWhenHeaderExist() + incWhenEmptyExist() + list.size + incWhenFooterExist()
+        countHeader() + countEmpty() + list.size + countFooter()
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         try {
             when (holder) {
-                is ItemHolder -> holder.bind(list[position - incWhenHeaderExist()])
+                is ItemHolder -> holder.bind(list[position - countHeader()])
                 is HeaderHolder -> holder.bind()
                 is FooterHolder -> holder.bind()
                 is EmptyHolder -> {

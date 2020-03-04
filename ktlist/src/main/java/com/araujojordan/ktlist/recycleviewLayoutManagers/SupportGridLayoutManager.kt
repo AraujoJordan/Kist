@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Recycler
+import com.araujojordan.ktlist.R
 
 /**
  * Much safer LayoutManager than the original one
@@ -18,13 +19,21 @@ class SupportGridLayoutManager : GridLayoutManager {
         defStyleAttr: Int,
         defStyleRes: Int
     ) : super(context, attrs, defStyleAttr, defStyleRes)
-    constructor(context: Context?, spanCount: Int) : super(context, spanCount)
+
+    constructor(context: Context?, spanCount: Int) : super(
+        context, context?.resources?.getInteger(R.integer.ktlist_grid_rows) ?: spanCount)
+
     constructor(
         context: Context?,
         spanCount: Int,
         orientation: Int,
         reverseLayout: Boolean
-    ) : super(context, spanCount, orientation, reverseLayout)
+    ) : super(
+        context,
+        context?.resources?.getInteger(R.integer.ktlist_grid_rows) ?: spanCount,
+        orientation,
+        reverseLayout
+    )
 
     override fun onLayoutChildren(
         recycler: Recycler,
@@ -33,7 +42,8 @@ class SupportGridLayoutManager : GridLayoutManager {
         try {
             super.onLayoutChildren(recycler, state)
         } catch (e: IndexOutOfBoundsException) {
-            Log.e("SupportLinearLM",
+            Log.e(
+                "SupportLinearLM",
                 "Problem to load item on list"
             )
         }
