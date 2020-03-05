@@ -195,7 +195,7 @@ class KtList<T>(
 
     override fun getItemViewType(position: Int): Int {
         return when {
-            headerLayout != null && list.isEmpty() && position == 1 -> TYPE.EMPTY.ordinal
+            emptyLayout != null && list.isEmpty() && position == countHeader() -> TYPE.EMPTY.ordinal
             headerLayout != null && position == 0 -> TYPE.HEADER.ordinal
             footerLayout != null && position == list.size + countEmpty() + countHeader() -> TYPE.FOOTER.ordinal
             else -> TYPE.ITEM.ordinal
