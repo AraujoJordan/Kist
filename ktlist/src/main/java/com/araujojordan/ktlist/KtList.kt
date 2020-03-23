@@ -1,5 +1,6 @@
 package com.araujojordan.ktlist
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,7 +57,7 @@ class KtList<T>(
     private var headerModifier: ((headerView: View) -> Unit)? = null,
     private var footerLayout: Int? = null,
     private var footerModifier: ((footerView: View) -> Unit)? = null,
-    private var loadingView : Int? = R.layout.ktlist_loading_item,
+    private var loadingView: Int? = R.layout.ktlist_loading_item,
     private var loadingModifier: ((footerView: View) -> Unit)? = null,
     var emptyLayout: Int? = null,
     private var endOfScroll: (() -> Unit)? = null,
@@ -78,15 +79,15 @@ class KtList<T>(
         list = list.toMutableList()
     }
 
-    private var isLoading : Boolean = false
-    private var recycleView : RecyclerView? = null
+    private var isLoading: Boolean = false
+    private var recycleView: RecyclerView? = null
+    private var lastListHash: Long = -1L
 
-    //Variable used if the user activate the endOfScroll variable
+    /**
+     * Function/variable used if the user activate the endOfScroll callback
+     */
     val endOfScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-
-            
-
             if (dy > 0) {
                 val visibleItemCount = recyclerView.layoutManager?.childCount ?: 0
                 val totalItemCount = recyclerView.layoutManager?.itemCount ?: 0
@@ -97,11 +98,21 @@ class KtList<T>(
                     is SupportGridLayoutManager -> (recyclerView.layoutManager as SupportGridLayoutManager).findFirstVisibleItemPosition()
                     else -> 3
                 }
-                if (visibleItemCount + pastVisibleItems >= totalItemCount) {
+
+                val listHash = getListHash()
+                if (visibleItemCount + pastVisibleItems >= totalItemCount && lastListHash != listHash) {
+                    lastListHash = listHash
                     endOfScroll?.invoke()
                 }
             }
         }
+    }
+
+    private fun getListHash(): Long {
+        Log.d("KtList","getListHash()")
+        var hash = 0L
+        list.forEach { hash += it.hashCode() }
+        return hash
     }
 
     /**
@@ -125,8 +136,8 @@ class KtList<T>(
 
     fun getItemByIndex(index: Int) = list[index]
 
-    fun first(searchFor:(item:T) -> Boolean) = list.firstOrNull { searchFor(it) }
-    fun filter(searchFor:(item:T) -> Boolean) = list.filter { searchFor(it) }
+    fun first(searchFor: (item: T) -> Boolean) = list.firstOrNull { searchFor(it) }
+    fun filter(searchFor: (item: T) -> Boolean) = list.filter { searchFor(it) }
 
 
     /**
@@ -158,10 +169,10 @@ class KtList<T>(
         val newList = ArrayList<T>()
         newList.addAll(list)
         newList.addAll(itemsToAdd)
-        val indexOfAdd = list.size+1
+        val indexOfAdd = list.size + 1
         list = newList
         notifyItemInserted(indexOfAdd)
-        
+
 
     }
 
@@ -172,10 +183,14 @@ class KtList<T>(
      *
      * @param isLoading set the loading status
      */
-    fun setLoading(isLoading:Boolean) {
-        this.isLoading = isLoading
-        notifyItemChanged(list.size+countHeader())
-        
+    fun setLoading(isLoading: Boolean) {
+        try {
+            this.isLoading = isLoading
+            notifyItemChanged(list.size + countHeader())
+        } catch (err: Exception) {
+            err.printStackTrace()
+        }
+
     }
 
 
@@ -193,7 +208,7 @@ class KtList<T>(
         newList.removeAll(itemsToRemove)
         list = newList
         notifyDataSetChanged()
-        
+
     }
 
     /**
@@ -210,7 +225,7 @@ class KtList<T>(
         indexesToRemove.forEach { newList.removeAt(it) }
         list = newList
         notifyDataSetChanged()
-        
+
     }
 
     /**
@@ -219,7 +234,7 @@ class KtList<T>(
     fun setList(newList: List<T>) {
         this.list = ArrayList(newList)
         notifyDataSetChanged()
-        
+
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
@@ -228,10 +243,9 @@ class KtList<T>(
     }
 
 
-
     override fun getItemViewType(position: Int): Int {
         return when {
-            loadingView != null && isLoading && position == countHeader()+list.size -> TYPE.LOADING.ordinal
+            loadingView != null && isLoading && position == countHeader() + list.size -> TYPE.LOADING.ordinal
             emptyLayout != null && !isLoading && list.isEmpty() && position == countHeader() -> TYPE.EMPTY.ordinal
             headerLayout != null && position == 0 -> TYPE.HEADER.ordinal
             footerLayout != null && position == list.size + countEmpty() + countHeader() -> TYPE.FOOTER.ordinal
@@ -264,7 +278,9 @@ class KtList<T>(
                 is HeaderHolder -> holder.bind()
                 is FooterHolder -> holder.bind()
                 is LoadingHolder -> holder.bind()
-                is EmptyHolder -> { /** Do you really need to change an empty view? **/ }
+                is EmptyHolder -> {
+                    /** Do you really need to change an empty view? **/
+                }
             }
         } catch (err: Exception) {
             err.printStackTrace()
