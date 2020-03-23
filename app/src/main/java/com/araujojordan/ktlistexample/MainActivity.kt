@@ -1,8 +1,8 @@
 package com.araujojordan.ktlistexample
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import android.os.Handler
+import androidx.appcompat.app.AppCompatActivity
 import com.araujojordan.ktlist.KtList
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item.view.*
@@ -45,5 +45,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         recycleview.adapter = ktListAdapter
+
+        ktListAdapter?.setLoading(true)
+        Handler().postDelayed(Runnable { ktListAdapter?.setLoading(false) }, 2000)
     }
 }

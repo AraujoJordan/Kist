@@ -56,6 +56,8 @@ class KtList<T>(
     private var headerModifier: ((headerView: View) -> Unit)? = null,
     private var footerLayout: Int? = null,
     private var footerModifier: ((footerView: View) -> Unit)? = null,
+    private var loadingView : Int? = R.layout.ktlist_loading_page,
+    private var loadingModifier: ((footerView: View) -> Unit)? = null,
     var emptyLayout: Int? = null,
     private var endOfScroll: (() -> Unit)? = null,
     private var clickListener: ((item: T, position: Int) -> Unit)? = null,
@@ -67,6 +69,7 @@ class KtList<T>(
         HEADER,
         ITEM,
         EMPTY,
+        LOADING,
         FOOTER
     }
 
@@ -74,6 +77,8 @@ class KtList<T>(
     init {
         list = list.toMutableList()
     }
+
+    private var isLoading : Boolean = false
 
     //Variable used if the user activate the endOfScroll variable
     val endOfScrollListener = object : RecyclerView.OnScrollListener() {
@@ -152,6 +157,18 @@ class KtList<T>(
         notifyDataSetChanged()
     }
 
+    /**
+     * Use this method to set if the KtList should show the loading screen or not. Note that this
+     * action will override the EmptyView, but if there is a list already, it will only show the
+     * loading as an item of the list
+     *
+     * @param isLoading set the loading status
+     */
+    fun setLoading(isLoading:Boolean) {
+        this.isLoading = isLoading
+        notifyDataSetChanged()
+    }
+
 
     /**
      * Use this method to remove one or more elements to the list, it will also prevent crashes of
@@ -193,9 +210,12 @@ class KtList<T>(
         notifyDataSetChanged()
     }
 
+
+
     override fun getItemViewType(position: Int): Int {
         return when {
-            emptyLayout != null && list.isEmpty() && position == countHeader() -> TYPE.EMPTY.ordinal
+            loadingView != null && isLoading && position == countHeader() -> TYPE.LOADING.ordinal
+            emptyLayout != null && !isLoading && list.isEmpty() && position == countHeader() -> TYPE.EMPTY.ordinal
             headerLayout != null && position == 0 -> TYPE.HEADER.ordinal
             footerLayout != null && position == list.size + countEmpty() + countHeader() -> TYPE.FOOTER.ordinal
             else -> TYPE.ITEM.ordinal
@@ -212,6 +232,8 @@ class KtList<T>(
                 EmptyHolder(LayoutInflater.from(parent.context), parent)
             TYPE.FOOTER.ordinal ->
                 FooterHolder(LayoutInflater.from(parent.context), parent)
+            TYPE.LOADING.ordinal ->
+                LoadingHolder(LayoutInflater.from(parent.context), parent)
             else -> ItemHolder(LayoutInflater.from(parent.context), parent)
         }
 
@@ -224,10 +246,11 @@ class KtList<T>(
                 is ItemHolder -> holder.bind(list[position - countHeader()])
                 is HeaderHolder -> holder.bind()
                 is FooterHolder -> holder.bind()
-                is EmptyHolder -> {
-                } //Do you really need to change an empty view?
+                is LoadingHolder -> holder.bind()
+                is EmptyHolder -> { /** Do you really need to change an empty view? **/ }
             }
         } catch (err: Exception) {
+            err.printStackTrace()
         }
     }
 
@@ -239,6 +262,7 @@ class KtList<T>(
             val index = list.indexOfFirst { itemElement == it }
             clickListener?.invoke(itemElement, index)
         } catch (err: Exception) {
+            err.printStackTrace()
         }
     }
 
@@ -281,6 +305,14 @@ class KtList<T>(
     inner class HeaderHolder(inflater: LayoutInflater, parent: ViewGroup) :
         ViewHolder(inflater, parent, headerLayout ?: layout) {
         fun bind() = headerModifier?.let {
+            it(itemView)
+            notifyItemChanged(0)
+        }
+    }
+
+    inner class LoadingHolder(inflater: LayoutInflater, parent: ViewGroup) :
+        ViewHolder(inflater, parent, loadingView ?: layout) {
+        fun bind() = loadingModifier?.let {
             it(itemView)
             notifyItemChanged(0)
         }
