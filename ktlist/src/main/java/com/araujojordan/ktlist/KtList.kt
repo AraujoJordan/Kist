@@ -79,6 +79,7 @@ class KtList<T>(
     }
 
     private var isLoading : Boolean = false
+    private var recycleView : RecyclerView? = null
 
     //Variable used if the user activate the endOfScroll variable
     val endOfScrollListener = object : RecyclerView.OnScrollListener() {
@@ -111,6 +112,7 @@ class KtList<T>(
      */
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
+        this.recycleView = recyclerView
         if (recyclerView.layoutManager == null && layoutManager == null)
             recyclerView.layoutManager = SupportLinearLayoutManager(recyclerView.context)
         if (layoutManager != null) recyclerView.layoutManager = layoutManager
@@ -155,6 +157,8 @@ class KtList<T>(
         newList.addAll(itemsToAdd)
         list = newList
         notifyDataSetChanged()
+        this.recycleView?.scheduleLayoutAnimation()
+
     }
 
     /**
@@ -167,6 +171,7 @@ class KtList<T>(
     fun setLoading(isLoading:Boolean) {
         this.isLoading = isLoading
         notifyDataSetChanged()
+        this.recycleView?.scheduleLayoutAnimation()
     }
 
 
@@ -184,6 +189,7 @@ class KtList<T>(
         newList.removeAll(itemsToRemove)
         list = newList
         notifyDataSetChanged()
+        this.recycleView?.scheduleLayoutAnimation()
     }
 
     /**
@@ -200,6 +206,7 @@ class KtList<T>(
         indexesToRemove.forEach { newList.removeAt(it) }
         list = newList
         notifyDataSetChanged()
+        this.recycleView?.scheduleLayoutAnimation()
     }
 
     /**
@@ -208,6 +215,12 @@ class KtList<T>(
     fun setList(newList: List<T>) {
         this.list = ArrayList(newList)
         notifyDataSetChanged()
+        this.recycleView?.scheduleLayoutAnimation()
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        this.recycleView = null
     }
 
 
