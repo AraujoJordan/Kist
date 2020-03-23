@@ -104,6 +104,7 @@ recycleView.adapter = KtList(
 
 #### Step 1. Add the JitPack repository to your project build file 
 
+[![Jitpack Enable](https://jitpack.io/v/AraujoJordan/KtList.svg)](https://jitpack.io/AraujoJordan/KtList/)
 ```gradle
 allprojects {
 	repositories {
@@ -116,7 +117,7 @@ allprojects {
 
 ```gradle
 dependencies {
-	implementation 'com.github.AraujoJordan:KtList:0.0.2'
+	implementation 'com.github.AraujoJordan:KtList:X.X.X'
 }
 ```
 
