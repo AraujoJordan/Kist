@@ -84,6 +84,9 @@ class KtList<T>(
     //Variable used if the user activate the endOfScroll variable
     val endOfScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+
+            
+
             if (dy > 0) {
                 val visibleItemCount = recyclerView.layoutManager?.childCount ?: 0
                 val totalItemCount = recyclerView.layoutManager?.itemCount ?: 0
@@ -158,7 +161,7 @@ class KtList<T>(
         val indexOfAdd = list.size+1
         list = newList
         notifyItemInserted(indexOfAdd)
-        this.recycleView?.scheduleLayoutAnimation()
+        
 
     }
 
@@ -172,7 +175,7 @@ class KtList<T>(
     fun setLoading(isLoading:Boolean) {
         this.isLoading = isLoading
         notifyItemChanged(list.size+countHeader())
-        this.recycleView?.scheduleLayoutAnimation()
+        
     }
 
 
@@ -190,7 +193,7 @@ class KtList<T>(
         newList.removeAll(itemsToRemove)
         list = newList
         notifyDataSetChanged()
-        this.recycleView?.scheduleLayoutAnimation()
+        
     }
 
     /**
@@ -207,7 +210,7 @@ class KtList<T>(
         indexesToRemove.forEach { newList.removeAt(it) }
         list = newList
         notifyDataSetChanged()
-        this.recycleView?.scheduleLayoutAnimation()
+        
     }
 
     /**
@@ -216,7 +219,7 @@ class KtList<T>(
     fun setList(newList: List<T>) {
         this.list = ArrayList(newList)
         notifyDataSetChanged()
-        this.recycleView?.scheduleLayoutAnimation()
+        
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
