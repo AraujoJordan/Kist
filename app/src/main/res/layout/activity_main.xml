@@ -7,12 +7,12 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/button"
-        android:visibility="gone"
+        android:id="@+id/add"
+        android:visibility="visible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:text="Search" />
+        android:text="Add" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleview"

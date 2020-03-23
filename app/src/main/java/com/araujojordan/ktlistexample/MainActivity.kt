@@ -17,10 +17,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val list = ArrayList<String>()
-//        for (i in 0..15) {
-//            list.add("RANDOM VALUE $i")
-//        }
-//        index = 100
+
+        add.setOnClickListener {
+            ktListAdapter?.setLoading(true)
+            Handler().postDelayed({
+                index++
+                ktListAdapter?.addItems(listOf("RANDOM VALUE $index"))
+                ktListAdapter?.setLoading(false)
+            }, 250)
+        }
 
         ktListAdapter = KtList(
             list,

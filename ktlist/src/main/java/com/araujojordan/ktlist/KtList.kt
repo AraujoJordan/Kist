@@ -56,7 +56,7 @@ class KtList<T>(
     private var headerModifier: ((headerView: View) -> Unit)? = null,
     private var footerLayout: Int? = null,
     private var footerModifier: ((footerView: View) -> Unit)? = null,
-    private var loadingView : Int? = R.layout.ktlist_loading_page,
+    private var loadingView : Int? = R.layout.ktlist_loading_item,
     private var loadingModifier: ((footerView: View) -> Unit)? = null,
     var emptyLayout: Int? = null,
     private var endOfScroll: (() -> Unit)? = null,
@@ -155,8 +155,9 @@ class KtList<T>(
         val newList = ArrayList<T>()
         newList.addAll(list)
         newList.addAll(itemsToAdd)
+        val indexOfAdd = list.size+1
         list = newList
-        notifyDataSetChanged()
+        notifyItemInserted(indexOfAdd)
         this.recycleView?.scheduleLayoutAnimation()
 
     }
@@ -170,7 +171,7 @@ class KtList<T>(
      */
     fun setLoading(isLoading:Boolean) {
         this.isLoading = isLoading
-        notifyDataSetChanged()
+        notifyItemChanged(list.size+countHeader())
         this.recycleView?.scheduleLayoutAnimation()
     }
 
