@@ -51,19 +51,19 @@ import com.araujojordan.ktlist.recycleviewLayoutManagers.SupportLinearLayoutMana
  */
 class KtList<T>(
     private var list: List<T>,
-    private var layout: Int,
-    private var layoutManager: RecyclerView.LayoutManager? = null,
-    private var headerLayout: Int? = null,
-    private var headerModifier: ((headerView: View) -> Unit)? = null,
-    private var footerLayout: Int? = null,
-    private var footerModifier: ((footerView: View) -> Unit)? = null,
-    private var loadingView: Int? = R.layout.ktlist_loading_item,
-    private var loadingModifier: ((footerView: View) -> Unit)? = null,
+    var layout: Int,
+    var layoutManager: RecyclerView.LayoutManager? = null,
+    var headerLayout: Int? = null,
+    var headerModifier: ((headerView: View) -> Unit)? = null,
+    var footerLayout: Int? = null,
+    var footerModifier: ((footerView: View) -> Unit)? = null,
+    var loadingView: Int? = R.layout.ktlist_loading_item,
+    var loadingModifier: ((footerView: View) -> Unit)? = null,
     var emptyLayout: Int? = null,
-    private var endOfScroll: (() -> Unit)? = null,
-    private var clickListener: ((item: T, position: Int) -> Unit)? = null,
-    private var longClickListener: ((item: T, position: Int) -> Unit)? = null,
-    private var binding: (T, itemView: View) -> Unit
+    var endOfScroll: (() -> Unit)? = null,
+    var clickListener: ((item: T, position: Int) -> Unit)? = null,
+    var longClickListener: ((item: T, position: Int) -> Unit)? = null,
+    var binding: (T, itemView: View) -> Unit
 ) : RecyclerView.Adapter<KtList<T>.ViewHolder>() {
 
     enum class TYPE {
@@ -109,7 +109,7 @@ class KtList<T>(
     }
 
     private fun getListHash(): Long {
-        Log.d("KtList","getListHash()")
+        Log.d("KtList", "getListHash()")
         var hash = 0L
         list.forEach { hash += it.hashCode() }
         return hash
@@ -236,6 +236,12 @@ class KtList<T>(
         notifyDataSetChanged()
 
     }
+
+    /**
+     * Safely to get list from KtList
+     */
+    fun getList() = this.list
+
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)

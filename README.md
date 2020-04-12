@@ -11,6 +11,8 @@ KtList is a android library that provides a RecyclerView.Adapter implementation 
 Implementing lists in android sucks. If you ever had to implement a list in your apps you know the amount of boilerplate that you have to add just to put a simple list to show. But that just the begin, if you want to add click actions, Headers, Footers, Infinite Scrolling, Empty screens fallback (when the list is empty) you know you have to make a lot of modifications in bindings, create ViewHolders, put the LayoutManager that you forgot or handle some async problems when updating list while scrolling. it's a lot of work for a simple list right?
 KtList is a small solution for that. You will use it as an Adapter to your currently RecycleView and it will work magically.
 
+![](docs/assets/ktlist.gif)
+
 ## Usage
 
 ### Simple list implementation

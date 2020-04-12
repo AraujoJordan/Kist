@@ -8,6 +8,6 @@
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:gravity="center"
-        android:text="EMPTY VIEW" />
+        android:text="You have no items" />
 
 </LinearLayout>
