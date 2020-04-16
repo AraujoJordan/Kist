@@ -47,7 +47,7 @@ import com.araujojordan.ktlist.recycleviewLayoutManagers.SupportLinearLayoutMana
  * @param endOfScroll (Optional) If you want to implement infinite scrolling, implement this lambda
  * @param clickListener (Optional) If you want to implement click action in the entire list item, implement this lambda
  * @param longClickListener (Optional) If you want to implement long click in the entire list item, implement this lambda
- * @param binding (Optional) If you want to implement infinite scrolling, implement this lambda
+ * @param binding Implement the binding on the view itself (like you do in the ViewHolder)
  */
 class KtList<T>(
     private var list: List<T>,
@@ -127,10 +127,13 @@ class KtList<T>(
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         this.recycleView = recyclerView
+
+        this.recycleView?.minimumHeight = 0
+        this.recycleView?.layoutParams?.height= ViewGroup.LayoutParams.MATCH_PARENT
+
         if (recyclerView.layoutManager == null && layoutManager == null)
             recyclerView.layoutManager = SupportLinearLayoutManager(recyclerView.context)
         if (layoutManager != null) recyclerView.layoutManager = layoutManager
-
         if (endOfScroll != null) recyclerView.addOnScrollListener(endOfScrollListener)
     }
 
@@ -205,10 +208,48 @@ class KtList<T>(
      */
     fun removeItems(vararg itemsToRemove: T) {
         val newList = list.toMutableList()
-        newList.removeAll(itemsToRemove)
-        list = newList
-        notifyDataSetChanged()
 
+        val indexToRemove = mutableListOf<Int>()
+        itemsToRemove.forEach { indexToRemove.add(newList.indexOf(it)) }
+        indexToRemove.sort()
+
+        newList.removeAll(itemsToRemove)
+
+        list = newList
+
+        removeAnimation(*indexToRemove.toIntArray())
+    }
+
+    /**
+     * Check if index list is continuous sorted
+     * @param range range of indexes SORTED
+     * @return if is continuous
+     */
+    private fun isContinuous(range: List<Int>): Boolean {
+        val newList = range.toMutableList()
+        newList.forEachIndexed { index, element ->
+            if (index > 0) {
+                if (newList[index - 1] >= element) return false
+            }
+        }
+        return true
+    }
+
+    /**
+     * Show the right removal animation based on Header/Footer and group of elements that
+     * are being removed
+     * @param indexesToRemove index of elements that was removed
+     */
+    private fun removeAnimation(vararg indexesToRemove: Int) {
+        if (indexesToRemove.size > 1) {
+            if (isContinuous(indexesToRemove.toList())) {
+                notifyItemRangeRemoved(indexesToRemove.first()+countHeader(), indexesToRemove.size)
+            } else {
+                notifyDataSetChanged()
+            }
+        } else {
+            notifyItemRemoved(indexesToRemove.first()+countHeader())
+        }
     }
 
     /**
@@ -224,8 +265,8 @@ class KtList<T>(
         val newList = list.toMutableList()
         indexesToRemove.forEach { newList.removeAt(it) }
         list = newList
-        notifyDataSetChanged()
 
+        removeAnimation(*indexesToRemove)
     }
 
     /**
