@@ -15,6 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
+        android:gravity="end"
         android:orientation="vertical">
 
         <ToggleButton
@@ -45,5 +46,11 @@
             android:layout_height="wrap_content"
             android:textOff="Footer OFF"
             android:textOn="Footer ON" />
+
+        <Button
+            android:id="@+id/addButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add"/>
     </LinearLayout>
 </FrameLayout>

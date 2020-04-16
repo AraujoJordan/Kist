@@ -129,7 +129,7 @@ class KtList<T>(
         this.recycleView = recyclerView
 
         this.recycleView?.minimumHeight = 0
-        this.recycleView?.layoutParams?.height= ViewGroup.LayoutParams.MATCH_PARENT
+        this.recycleView?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
 
         if (recyclerView.layoutManager == null && layoutManager == null)
             recyclerView.layoutManager = SupportLinearLayoutManager(recyclerView.context)
@@ -167,16 +167,22 @@ class KtList<T>(
      * See more at: https://medium.com/@nhancv/android-fix-java-lang-indexoutofboundsexception-inconsistency-detected-invalid-item-70e9b3b489a2
      *
      * @param itemsToAdd the items that will be added to the displayed list
+     * @param position where it's gonna be added, by default is at the end of the current list
      */
-    fun addItems(itemsToAdd: List<T>) {
+    fun addItems(itemsToAdd: List<T>, position: Int = list.size) {
         val newList = ArrayList<T>()
         newList.addAll(list)
-        newList.addAll(itemsToAdd)
-        val indexOfAdd = list.size + 1
+        if (position == list.size)
+            newList.addAll(itemsToAdd)
+        else
+            itemsToAdd.forEachIndexed { index, item -> newList.add(position + index, item) }
+
+        val listOfIndexes = mutableListOf<Int>()
+        itemsToAdd.forEachIndexed { index, _ -> listOfIndexes.add(position + index) }
+
         list = newList
-        notifyItemInserted(indexOfAdd)
 
-
+        addAnimation(*listOfIndexes.toIntArray())
     }
 
     /**
@@ -193,7 +199,6 @@ class KtList<T>(
         } catch (err: Exception) {
             err.printStackTrace()
         }
-
     }
 
 
@@ -236,6 +241,23 @@ class KtList<T>(
     }
 
     /**
+     * Show the right adding animation based on Header/Footer and group of elements that
+     * are being added
+     * @param indexesToAdd index of elements that was added
+     */
+    private fun addAnimation(vararg indexesToAdd: Int) {
+        if (indexesToAdd.size > 1) {
+            if (isContinuous(indexesToAdd.toList())) {
+                notifyItemRangeInserted(indexesToAdd.first() + countHeader(), indexesToAdd.size)
+            } else {
+                notifyDataSetChanged()
+            }
+        } else {
+            notifyItemInserted(indexesToAdd.first() + countHeader())
+        }
+    }
+
+    /**
      * Show the right removal animation based on Header/Footer and group of elements that
      * are being removed
      * @param indexesToRemove index of elements that was removed
@@ -243,12 +265,15 @@ class KtList<T>(
     private fun removeAnimation(vararg indexesToRemove: Int) {
         if (indexesToRemove.size > 1) {
             if (isContinuous(indexesToRemove.toList())) {
-                notifyItemRangeRemoved(indexesToRemove.first()+countHeader(), indexesToRemove.size)
+                notifyItemRangeRemoved(
+                    indexesToRemove.first() + countHeader(),
+                    indexesToRemove.size
+                )
             } else {
                 notifyDataSetChanged()
             }
         } else {
-            notifyItemRemoved(indexesToRemove.first()+countHeader())
+            notifyItemRemoved(indexesToRemove.first() + countHeader())
         }
     }
 

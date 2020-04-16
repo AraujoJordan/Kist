@@ -39,6 +39,10 @@ class MainActivity : AppCompatActivity() {
         loadingToggleButton?.setOnCheckedChangeListener { _, isChecked ->
             ktListAdapter?.setLoading(isChecked)
         }
+        addButton?.setOnClickListener {
+            index++
+            ktListAdapter?.addItems(listOf("RANDOM VALUE $index"))
+        }
     }
 
     fun setupktList() {
