@@ -1,5 +1,7 @@
 # KtList
-RecycleView without boilerplates
+**RecycleView without boilerplates**
+
+
 [![CircleCI](https://circleci.com/gh/AraujoJordan/KtList.svg?style=shield)](https://circleci.com/gh/AraujoJordan/KtList)
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/AraujoJordan/KtList/LICENSE)
 [![Jitpack Enable](https://jitpack.io/v/AraujoJordan/KtList.svg)](https://jitpack.io/AraujoJordan/KtList/)
