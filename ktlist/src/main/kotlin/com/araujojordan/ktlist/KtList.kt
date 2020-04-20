@@ -1,5 +1,6 @@
 package com.araujojordan.ktlist
 
+import android.content.res.TypedArray
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.araujojordan.ktlist.recycleviewLayoutManagers.SupportGridLayoutManager
 import com.araujojordan.ktlist.recycleviewLayoutManagers.SupportLinearLayoutManager
+import java.lang.reflect.Type
 
 /**
  * Designed and developed by Jordan Lira (@araujojordan)
@@ -185,6 +187,7 @@ class KtList<T>(
         addAnimation(*listOfIndexes.toIntArray())
     }
 
+
     /**
      * Use this method to set if the KtList should show the loading screen or not. Note that this
      * action will override the EmptyView, but if there is a list already, it will only show the
@@ -225,6 +228,7 @@ class KtList<T>(
         removeAnimation(*indexToRemove.toIntArray())
     }
 
+
     /**
      * Check if index list is continuous sorted
      * @param range range of indexes SORTED
@@ -233,9 +237,7 @@ class KtList<T>(
     private fun isContinuous(range: List<Int>): Boolean {
         val newList = range.toMutableList()
         newList.forEachIndexed { index, element ->
-            if (index > 0) {
-                if (newList[index - 1] >= element) return false
-            }
+            if (index > 0 && newList[index - 1] >= element) return false
         }
         return true
     }
@@ -431,3 +433,37 @@ class KtList<T>(
         }
     }
 }
+
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//  OPERATORS OVERRIDES
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+/**
+ * Use this operator (-=) to remove elements of the list, it will also prevent crashes of
+ * IndexOutOfBoundsException of the validateViewHolderForOffsetPosition() method.
+ * WARNING: NEVER CHANGE THE LIST DIRECTLY, CHANGE THE REFERENCE!
+ *
+ * See more at: https://medium.com/@nhancv/android-fix-java-lang-indexoutofboundsexception-inconsistency-detected-invalid-item-70e9b3b489a2
+ *
+ * @param itemsToRemove the elements that will be removed from the list
+ */
+inline operator fun <reified T> KtList<T>.minusAssign(itemsToRemove: List<T>) =
+    removeItems(*itemsToRemove.toTypedArray())
+
+/**
+ * Use this operator (+=) to add more elements to the list, it will also handle if you already have
+ * some elements and just want add more. This will also prevent crashes of
+ * IndexOutOfBoundsException of the validateViewHolderForOffsetPosition() method.
+ * WARNING: NEVER CHANGE THE LIST DIRECTLY, CHANGE THE REFERENCE!
+ *
+ * See more at: https://medium.com/@nhancv/android-fix-java-lang-indexoutofboundsexception-inconsistency-detected-invalid-item-70e9b3b489a2
+ *
+ * @param itemsToAdd the items that will be added to the displayed list
+ */
+inline operator fun <reified T> KtList<T>.plusAssign(itemsToAdd: List<T>) = addItems(itemsToAdd)
+
+/**
+ * Check if a object is inside the adapter (KtList) list using the in or !in  operators
+ * @return true is the adapter contains the object
+ */
+inline operator fun <reified T> KtList<T>.contains(haveInside: T) = getList().contains(haveInside)

@@ -5,12 +5,16 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.araujojordan.ktlist.KtList
+import com.araujojordan.ktlist.plusAssign
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item.view.*
 
 class MainActivity : AppCompatActivity() {
 
-    var ktListAdapter: KtList<String>? = null
+    var ktListAdapter = KtList<String>(emptyList(), R.layout.item) { item, view ->
+        view.item_text.text = item
+    }
+
     var index = 0
 
     var stringList = listOf<String>()
@@ -37,44 +41,45 @@ class MainActivity : AppCompatActivity() {
             setupktList()
         }
         loadingToggleButton?.setOnCheckedChangeListener { _, isChecked ->
-            ktListAdapter?.setLoading(isChecked)
+            ktListAdapter.setLoading(isChecked)
         }
         addButton?.setOnClickListener {
             index++
-            ktListAdapter?.addItems(listOf("RANDOM VALUE $index"))
+            ktListAdapter += listOf("RANDOM VALUE $index")
         }
     }
 
     fun setupktList() {
 
-        stringList = ktListAdapter?.getList()?:listOf()
-        ktListAdapter = KtList(stringList, R.layout.item) { item, view -> view.item_text.text = item }
+        stringList = ktListAdapter.getList()
+        ktListAdapter =
+            KtList(stringList, R.layout.item) { item, view -> view.item_text.text = item }
 
-        if (haveHeader) ktListAdapter?.headerLayout = R.layout.header
+        if (haveHeader) ktListAdapter.headerLayout = R.layout.header
         if (haveFooter) {
-            ktListAdapter?.footerLayout = R.layout.end
-            ktListAdapter?.footerModifier = { footer(it) }
+            ktListAdapter.footerLayout = R.layout.end
+            ktListAdapter.footerModifier = { footer(it) }
         }
-        ktListAdapter?.clickListener = { item, position -> click(item) }
-        ktListAdapter?.endOfScroll = {
+        ktListAdapter.clickListener = { item, position -> click(item) }
+        ktListAdapter.endOfScroll = {
             endOfScroll()
         }
-        if(haveEmpty) ktListAdapter?.emptyLayout = R.layout.empty
+        if (haveEmpty) ktListAdapter.emptyLayout = R.layout.empty
 
         recycleview.adapter = ktListAdapter
     }
 
     fun footer(it: View) {
         it.setOnClickListener {
-            ktListAdapter?.setLoading(true)
+            ktListAdapter.setLoading(true)
             index++
-            ktListAdapter?.addItems(listOf("RANDOM VALUE $index"))
-            ktListAdapter?.setLoading(false)
+            ktListAdapter.addItems(listOf("RANDOM VALUE $index"))
+            ktListAdapter.setLoading(false)
         }
     }
 
     fun click(item: String) {
-        ktListAdapter?.removeItems(item)
+        ktListAdapter.removeItems(item)
     }
 
     fun endOfScroll() {
@@ -84,6 +89,6 @@ class MainActivity : AppCompatActivity() {
             moreElements.add("RANDOM VALUE FROM END OF SCROLL ${index + i}")
         }
         index += 5
-        ktListAdapter?.addItems(moreElements)
+        ktListAdapter.addItems(moreElements)
     }
 }
