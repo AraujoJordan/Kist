@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
             ktListAdapter.footerLayout = R.layout.end
             ktListAdapter.footerModifier = { footer(it) }
         }
-        ktListAdapter.clickListener = { item, position -> click(item) }
+        ktListAdapter.clickListener = { item, position, view -> click(item) }
         ktListAdapter.endOfScroll = {
             endOfScroll()
         }

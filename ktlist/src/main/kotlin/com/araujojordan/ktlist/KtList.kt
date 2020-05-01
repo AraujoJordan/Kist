@@ -63,8 +63,8 @@ class KtList<T>(
     var loadingModifier: ((footerView: View) -> Unit)? = null,
     var emptyLayout: Int? = null,
     var endOfScroll: (() -> Unit)? = null,
-    var clickListener: ((item: T, position: Int) -> Unit)? = null,
-    var longClickListener: ((item: T, position: Int) -> Unit)? = null,
+    var clickListener: ((item: T, position: Int, view : View) -> Unit)? = null,
+    var longClickListener: ((item: T, position: Int, view : View) -> Unit)? = null,
     var binding: (T, itemView: View) -> Unit
 ) : RecyclerView.Adapter<KtList<T>.ViewHolder>() {
 
@@ -367,7 +367,7 @@ class KtList<T>(
         try {
             val itemElement = view?.tag as T
             val index = list.indexOfFirst { itemElement == it }
-            clickListener?.invoke(itemElement, index)
+            clickListener?.invoke(itemElement, index, view)
         } catch (err: Exception) {
             err.printStackTrace()
         }
@@ -378,7 +378,7 @@ class KtList<T>(
         try {
             val itemElement = view?.tag as T
             val index = list.indexOfFirst { itemElement == it }
-            longClickListener?.invoke(itemElement, index)
+            longClickListener?.invoke(itemElement, index, view)
             true
         } catch (err: Exception) {
             false
