@@ -191,7 +191,7 @@ class KtList<T>(
      *
      * @param firstElement Get first element that return true
      * **/
-    fun updateLine(firstElement: (T) -> Booelan) {
+    fun updateLine(firstElement: (T) -> Boolean) {
         val index = list.indexOf(list.firstOrNull { firstElement(it) })
         try {
             notifyItemRangeChanged(countHeader() + index, 1)
