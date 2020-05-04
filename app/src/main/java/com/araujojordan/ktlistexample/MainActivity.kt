@@ -2,6 +2,7 @@ package com.araujojordan.ktlistexample
 
 import android.os.Bundle
 import android.os.Handler
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.araujojordan.ktlist.KtList
 import kotlinx.android.synthetic.main.activity_main.*
@@ -37,13 +38,7 @@ class MainActivity : AppCompatActivity() {
                 ktListAdapter?.removeItems(item)
             },
             endOfScroll = {
-//                Toast.makeText(this, "End of scroll reached!", Toast.LENGTH_LONG).show()
-//                val moreElements = ArrayList<String>()
-//                for (i in 1..100) {
-//                    moreElements.add("RANDOM VALUEX ${index + i}")
-//                }
-//                index += 100
-//                ktListAdapter?.addItems(moreElements)
+                Toast.makeText(this, "End of scroll reached!", Toast.LENGTH_LONG).show()
             }
         ) { item, view ->
             view.item_text.text = item

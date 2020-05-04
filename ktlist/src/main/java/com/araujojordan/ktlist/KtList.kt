@@ -109,7 +109,7 @@ class KtList<T>(
     }
 
     private fun getListHash(): Long {
-        Log.d("KtList","getListHash()")
+        Log.d("KtList", "getListHash()")
         var hash = 0L
         list.forEach { hash += it.hashCode() }
         return hash
@@ -174,6 +174,19 @@ class KtList<T>(
         notifyItemInserted(indexOfAdd)
 
 
+    }
+
+
+    /** Update position
+     *
+     * @param pos position that will updated
+     * **/
+    fun updateLine(pos: Int) {
+        try {
+            notifyItemRangeChanged(countHeader() + pos, 1)
+        } catch (err: Exception) {
+            err.printStackTrace()
+        }
     }
 
     /**
