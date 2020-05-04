@@ -172,8 +172,6 @@ class KtList<T>(
         val indexOfAdd = list.size + 1
         list = newList
         notifyItemInserted(indexOfAdd)
-
-
     }
 
 
@@ -184,6 +182,19 @@ class KtList<T>(
     fun updateLine(pos: Int) {
         try {
             notifyItemRangeChanged(countHeader() + pos, 1)
+        } catch (err: Exception) {
+            err.printStackTrace()
+        }
+    }
+
+    /** Update position
+     *
+     * @param firstElement Get first element that return true
+     * **/
+    fun updateLine(firstElement: (T) -> Booelan) {
+        val index = list.indexOf(list.firstOrNull { firstElement(it) })
+        try {
+            notifyItemRangeChanged(countHeader() + index, 1)
         } catch (err: Exception) {
             err.printStackTrace()
         }
