@@ -60,6 +60,7 @@ class KtList<T>(
     private var loadingView: Int? = R.layout.ktlist_loading_item,
     private var loadingModifier: ((footerView: View) -> Unit)? = null,
     var emptyLayout: Int? = null,
+    private var emptyModifier: ((emptyView: View) -> Unit)? = null,
     private var endOfScroll: (() -> Unit)? = null,
     private var clickListener: ((item: T, position: Int, view: View) -> Unit)? = null,
     private var longClickListener: ((item: T, position: Int, view: View) -> Unit)? = null,
@@ -214,7 +215,6 @@ class KtList<T>(
         } catch (err: Exception) {
             err.printStackTrace()
         }
-
     }
 
 
@@ -357,7 +357,12 @@ class KtList<T>(
         ViewHolder(inflater, parent, layout)
 
     inner class EmptyHolder(inflater: LayoutInflater, parent: ViewGroup) :
-        ViewHolder(inflater, parent, emptyLayout ?: layout)
+        ViewHolder(inflater, parent, emptyLayout ?: layout) {
+        fun bind() = emptyModifier?.let {
+            it(itemView)
+            notifyItemChanged(0)
+        }
+    }
 
     inner class HeaderHolder(inflater: LayoutInflater, parent: ViewGroup) :
         ViewHolder(inflater, parent, headerLayout ?: layout) {
