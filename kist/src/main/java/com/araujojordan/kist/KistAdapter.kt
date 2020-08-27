@@ -172,7 +172,11 @@ class KistAdapter<T>(
         newList.addAll(itemsToAdd)
         val indexOfAdd = list.size + 1
         list = newList
-        notifyItemInserted(indexOfAdd)
+        try {
+            notifyItemInserted(indexOfAdd)
+        } catch (err: Exception) {
+            //Ignore
+        }
     }
 
 
@@ -184,7 +188,7 @@ class KistAdapter<T>(
         try {
             notifyItemRangeChanged(countHeader() + pos, 1)
         } catch (err: Exception) {
-            err.printStackTrace()
+            //Ignore
         }
     }
 
@@ -208,7 +212,7 @@ class KistAdapter<T>(
             this.isLoading = isLoading
             notifyItemChanged(list.size + countHeader())
         } catch (err: Exception) {
-            err.printStackTrace()
+            //Ignore
         }
     }
 
@@ -223,10 +227,14 @@ class KistAdapter<T>(
      * @param itemsToRemove the elements that will be removed from the list
      */
     fun removeItems(vararg itemsToRemove: T) {
-        val newList = list.toMutableList()
-        newList.removeAll(itemsToRemove)
-        list = newList
-        notifyDataSetChanged()
+        try {
+            val newList = list.toMutableList()
+            newList.removeAll(itemsToRemove)
+            list = newList
+            notifyDataSetChanged()
+        } catch (err: Exception) {
+            //Ignore
+        }
 
     }
 
@@ -240,10 +248,14 @@ class KistAdapter<T>(
      * @param indexesToRemove the index(es) that will be removed from the list
      */
     fun removeItemsIndex(vararg indexesToRemove: Int) {
-        val newList = list.toMutableList()
-        indexesToRemove.forEach { newList.removeAt(it) }
-        list = newList
-        notifyDataSetChanged()
+        try {
+            val newList = list.toMutableList()
+            indexesToRemove.forEach { newList.removeAt(it) }
+            list = newList
+            notifyDataSetChanged()
+        } catch (err: Exception) {
+            //Ignore
+        }
 
     }
 
@@ -254,7 +266,11 @@ class KistAdapter<T>(
      */
     fun setList(newList: List<T>) {
         this.list = ArrayList(newList)
-        notifyDataSetChanged()
+        try {
+            notifyDataSetChanged()
+        } catch (err: Exception) {
+            //Ignore
+        }
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
@@ -355,32 +371,48 @@ class KistAdapter<T>(
     inner class EmptyHolder(inflater: LayoutInflater, parent: ViewGroup) :
         ViewHolder(inflater, parent, emptyLayout ?: layout) {
         fun bind() = emptyModifier?.let {
-            it(itemView)
-            notifyItemChanged(0)
+            try {
+                it(itemView)
+                notifyItemChanged(0)
+            } catch (err: Exception) {
+                //Ignore
+            }
         }
     }
 
     inner class HeaderHolder(inflater: LayoutInflater, parent: ViewGroup) :
         ViewHolder(inflater, parent, headerLayout ?: layout) {
         fun bind() = headerModifier?.let {
-            it(itemView)
-            notifyItemChanged(0)
+            try {
+                it(itemView)
+                notifyItemChanged(0)
+            } catch (err: Exception) {
+                //Ignore
+            }
         }
     }
 
     inner class LoadingHolder(inflater: LayoutInflater, parent: ViewGroup) :
         ViewHolder(inflater, parent, loadingView ?: layout) {
         fun bind() = loadingModifier?.let {
-            it(itemView)
-            notifyItemChanged(0)
+            try {
+                it(itemView)
+                notifyItemChanged(0)
+            } catch (err: Exception) {
+                //Ignore
+            }
         }
     }
 
     inner class FooterHolder(inflater: LayoutInflater, parent: ViewGroup) :
         ViewHolder(inflater, parent, footerLayout ?: layout) {
         fun bind() = footerModifier?.let {
-            it(itemView)
-            notifyItemChanged(itemCount)
+            try {
+                it(itemView)
+                notifyItemChanged(itemCount)
+            } catch (err: Exception) {
+                //Ignore
+            }
         }
     }
 }
