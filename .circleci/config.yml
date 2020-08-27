@@ -11,7 +11,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: jars-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "build.gradle" }}-{{ checksum "ktlist/build.gradle" }}
+          key: jars-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "build.gradle" }}-{{ checksum "kist/build.gradle" }}
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
@@ -19,10 +19,10 @@ jobs:
           paths:
             - ~/.gradle
             - ~/.m2
-          key: jars-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "build.gradle" }}-{{ checksum "ktlist/build.gradle" }}
+          key: jars-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "build.gradle" }}-{{ checksum "kist/build.gradle" }}
       - run:
           name: Run Tests
-          command: ./gradlew :ktlist:test
+          command: ./gradlew :kist:test
       - store_artifacts:
-          path: ktlist/build/reports
+          path: kist/build/reports
           destination: reports

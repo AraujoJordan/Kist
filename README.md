@@ -1,75 +1,72 @@
-# KtList
+# Kist
 **RecycleView without boilerplates**
 
 
-[![CircleCI](https://circleci.com/gh/AraujoJordan/KtList.svg?style=shield)](https://circleci.com/gh/AraujoJordan/KtList)
-[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/AraujoJordan/KtList/LICENSE)
-[![Jitpack Enable](https://jitpack.io/v/AraujoJordan/KtList.svg)](https://jitpack.io/AraujoJordan/KtList/)
+[![CircleCI](https://circleci.com/gh/AraujoJordan/Kist.svg?style=shield)](https://circleci.com/gh/AraujoJordan/Kist)
+[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/AraujoJordan/Kist/LICENSE)
+[![Jitpack Enable](https://jitpack.io/v/AraujoJordan/Kist.svg)](https://jitpack.io/AraujoJordan/Kist/)
 
 
-KtList is a android library that provides a RecyclerView.Adapter implementation that make easier to implement things like Headers, Footers, Empty Fallbacks, Infinite Scrolling and so on. It will also make it easy to implement the adapter itself as you don't need to implement ViewHolders and others boilerplate methods.
+Kist is a android library that provides a RecyclerView.Adapter implementation that make easier to implement things like Headers, Footers, Empty Fallbacks, Infinite Scrolling and so on. It will also make it easy to implement the adapter itself as you don't need to implement ViewHolders and others boilerplate methods.
 
-## 🚀 Why use KtList?
+## 🚀 Why use Kist?
 
-Implementing lists in android sucks. If you ever had to implement a list in your apps you know the amount of boilerplate that you have to add just to put a simple list to show. But that just the begin, if you want to add click actions, Headers, Footers, Infinite Scrolling, Empty screens fallback (when the list is empty) you know you have to make a lot of modifications in bindings, create ViewHolders, put the LayoutManager that you forgot or handle some async problems when updating list while scrolling. it's a lot of work for a simple list right?
-KtList is a small solution for that. You will use it as an Adapter to your currently RecycleView and it will work magically.
+If you ever had to implement a list in your apps you know the amount of boilerplate that you have to add some elements to show. But that just the begin, if you want to add click actions, Headers, Footers, Infinite Scrolling, Empty screens fallback (when the list is empty) you know you have to make a lot of modifications in bindings, create ViewHolders, put the LayoutManager that you forgot or handle some async problems when updating list while scrolling. it's a lot of work for a simple list right?
+Kist is a small solution for that. You will use it as an Adapter or as a view itself and it will work magically.
 
-![](docs/assets/ktlist.gif)
+![](docs/assets/kist.gif)
 
 ## 📖 Usage
 
 ### 🌟 Simple list implementation
+
+```xml
+    <com.araujojordan.kist.Kist
+        android:id="@+id/kistView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:itemLayout="@layout/item" />
+```
 ```kotlin
-override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)                    
 
-        val list = listOf("One","Two","Three","Four","Five") //Could be any type of object
-        yourRecycleView.adapter = KtList(list,R.layout.your_item_layout) { item, view ->
-            view.yourText.text = item //item is an element from the listOf above
-        }
-}
+        kistView.bindLayout = { item, view -> view.item_text.text = (item as String) }
+        kistView.add("One", "Two", "Three", "Four", "Five")
+    }
 ```
+
 And that's it. No more Adapter implementations, ViewHolders and others boilerplate to maintain in your code.
 The list of the example is a String, but you can use ANY type of objects instead.
 
 ### 🌟 Infinite Scrolling implementation
+```xml
+    <com.araujojordan.kist.Kist
+        android:id="@+id/kistView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:itemLayout="@layout/item" />
+```
 ```kotlin
-val ktList : KtList? = null 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)                    
 
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)                    
-    
-    ktList = KtList(
-            listOf(1,2,3,4,5), //original list
-            R.layout.your_item_layout,
-            endOfScroll = {
-                ktList?.addItems(listOf(6,7,8)) //more elements to be add to the list
-            }
-        ) { item, view ->
-        view.yourText.text = item
+        kistView.bindLayout = { item, view -> view.item_element.text = item as String }
+        kistView.onEndOfScroll = { kistView.add("more") } //just this
     }
-    yourRecycleView.adapter = ktList
-}
 ```
 ### 🌟 Header, Footer or Empty
-```kotlin
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)                    
-    
-    yourRecycleView.adapter = KtList(
-        listOf("One","Two","Three","Four","Five"),
-        R.layout.your_item_layout,
-        headerLayout = R.layout.header,
-        emptyLayout = R.layout.empty,
-        footerLayout = R.layout.footer,
-        footerModifier = { item, position -> /** You can change your header/footer like this here **/ }
-        ) { item, view ->
-            view.yourText.text = item //binding going here (this replace the ViewHolder)
-    }
-}
+```xml
+ <com.araujojordan.kist.Kist
+        android:id="@+id/kistView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:emptyLayout="@layout/header"
+        app:footerLayout="@layout/header"
+        app:headerLayout="@layout/header"
+        app:itemLayout="@layout/item" />
 ```
 ### 🌟 Click and LongClick events
 ```kotlin
@@ -77,32 +74,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)                    
     
-    yourRecycleView.adapter = KtList(
-        listOf("One","Two","Three","Four","Five"),
-        R.layout.your_item_layout,
-        clickListener = { item, position -> /** Do something **/ },
-        longClickListener = { item, position -> /** Do something **/ }
-        ) { item, view ->
-            view.yourText.text = item //binding going here (this replace the ViewHolder)
-    }
+    kistView.bindLayout = { item, view -> view.item_element.text = item as String }
+    kistView.onClickListener = { item, position, view ->  kistView.remove(position) }
 }
-```
-
-## 📖 All Properties
-```kotlin
-recycleView.adapter = KtList(
-            list, //(Mandatory) List of any type that you will be show (ex: ArrayList<String>, LinkedList<Person>, listOf(1,2,3)...)
-            R.layout.item, //(Mandatory) Item Int layout resource reference (ex: R.layout.item_view)
-            layoutManager = LinearLayoutManager(this), // (Optional) The type of layout, if you don't put it, it will be LinearLayout
-            headerLayout = R.layout.list_header, // (Optional) Header Int layout resource reference (ex: R.layout.list_header)
-            headerModifier = { view -> /** Do Something **/ }, // (Optional) If you want to modifier your header elements, use this param
-            emptyLayout = R.layout.empty,// (Optional) If you want to implement infinite scrolling, implement this lambda
-            footerLayout = R.layout.list_footer, //(Optional) Footer Int layout resource reference (ex: R.layout.list_footer)
-            footerModifier = { view -> /** Do Something **/ }, // (Optional) If you want to modifier your footer elements, use this param
-            endOfScroll = { /** Do Something **/ }, // (Optional) If you want to implement infinite scrolling, implement this lambda
-            clickListener = { item, position -> /** Do Something **/  },// (Optional) If you want to implement click action in the entire list item, implement this lambda
-            longClickListener = { item, position -> /** Do Something **/  }// (Optional) If you want to implement long click action in the entire list item, implement this lambda
-        ) { item, view ->  /** Do Something **/ } // (MANDATORY) The list item binding
 ```
 
 ## 📦 Installation
@@ -120,10 +94,10 @@ allprojects {
 
 #### Step 2. Add the dependency to your app build file 
 
-+ build.gradle (Module: app) [![Jitpack Enable](https://jitpack.io/v/AraujoJordan/KtList.svg)](https://jitpack.io/AraujoJordan/KtList/)
++ build.gradle (Module: app) [![Jitpack Enable](https://jitpack.io/v/AraujoJordan/Kist.svg)](https://jitpack.io/AraujoJordan/Kist/)
 ```gradle
 dependencies {
-	implementation 'com.github.AraujoJordan:KtList:X.X.X'
+	implementation 'com.github.AraujoJordan:Kist:X.X.X'
 }
 ```
 

@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/KtListExample.iml" filepath="$PROJECT_DIR$/KtListExample.iml" group="KtListExample" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="KtListExample/app" />
-      <module fileurl="file://$PROJECT_DIR$/ktlist/ktlist.iml" filepath="$PROJECT_DIR$/ktlist/ktlist.iml" group="KtListExample/ktlist" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Kist.iml" filepath="$PROJECT_DIR$/.idea/modules/Kist.iml" group="Kist" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Kist/app" />
+      <module fileurl="file://$PROJECT_DIR$/kist/kist.iml" filepath="$PROJECT_DIR$/kist/kist.iml" group="Kist/kist" />
     </modules>
   </component>
 </project>

@@ -1,2 +1,2 @@
-rootProject.name='KtListExample'
-include ':app',':ktlist'
+rootProject.name='Kist'
+include ':app',':kist'
