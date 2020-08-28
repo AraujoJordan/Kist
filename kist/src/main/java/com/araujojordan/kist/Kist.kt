@@ -14,6 +14,7 @@ class Kist(context: Context, attrs: AttributeSet) : RecyclerView(context, attrs)
     private var footerLayout: Int? = null
     private var loadingLayout: Int? = null
     private var emptyLayout: Int = R.layout.kist_loading_item
+    var listWithLoading : Boolean = false
     var bindLayout: ((item: Any, view: View) -> Unit)? = null
     var bindHeader: ((headerView: View) -> Unit)? = null
     var bindFooter: ((headerView: View) -> Unit)? = null
@@ -58,7 +59,7 @@ class Kist(context: Context, attrs: AttributeSet) : RecyclerView(context, attrs)
                 headerModifier = bindHeader,
                 footerLayout = footerLayout,
                 footerModifier = bindFooter,
-                loadingView = loadingLayout,
+                loadingView = if(listWithLoading) loadingLayout else null,
                 loadingModifier = bindLoader,
                 emptyLayout = emptyLayout,
                 clickListener = onClickListener,
@@ -81,7 +82,7 @@ class Kist(context: Context, attrs: AttributeSet) : RecyclerView(context, attrs)
                 headerModifier = bindHeader,
                 footerLayout = footerLayout,
                 footerModifier = bindFooter,
-                loadingView = loadingLayout,
+                loadingView = if(listWithLoading) loadingLayout else null,
                 loadingModifier = bindLoader,
                 emptyLayout = emptyLayout,
                 clickListener = onClickListener,
