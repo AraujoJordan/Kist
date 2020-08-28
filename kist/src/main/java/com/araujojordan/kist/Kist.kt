@@ -45,6 +45,9 @@ class Kist(context: Context, attrs: AttributeSet) : RecyclerView(context, attrs)
             getResourceId(R.styleable.kist_emptyLayout, 0).let {
                 if (it != 0) emptyLayout = it
             }
+             getResourceId(R.styleable.kist_loadingLayout, 0).let {
+                if (it != 0) loadingLayout = it
+            }
             spanCount = getInteger(R.styleable.kist_spanCount, 2)
             isGrid = getBoolean(R.styleable.kist_isGrid, false)
         }

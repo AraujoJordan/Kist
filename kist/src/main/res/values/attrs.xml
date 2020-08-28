@@ -5,6 +5,7 @@
         <attr name="headerLayout" format="reference" />
         <attr name="footerLayout" format="reference" />
         <attr name="emptyLayout" format="reference" />
+        <attr name="loadingLayout" format="reference" />
         <attr name="isGrid" format="boolean" />
         <attr name="spanCount" format="integer" />
     </declare-styleable>
