@@ -14,7 +14,6 @@ class Kist(context: Context, attrs: AttributeSet) : RecyclerView(context, attrs)
     private var footerLayout: Int? = null
     private var loadingLayout: Int? = null
     private var emptyLayout: Int = R.layout.kist_loading_item
-    var listWithLoading : Boolean = false
     var bindLayout: ((item: Any, view: View) -> Unit)? = null
     var bindHeader: ((headerView: View) -> Unit)? = null
     var bindFooter: ((headerView: View) -> Unit)? = null
@@ -24,7 +23,7 @@ class Kist(context: Context, attrs: AttributeSet) : RecyclerView(context, attrs)
     var onLongClickListener: ((item: Any, position: Int, view: View) -> Unit)? = null
     private var isGrid: Boolean = false
     private var spanCount: Int = 2
-
+    var listWithLoading : Boolean = false
     private var adapter: KistAdapter<Any>? = null
 
     private val layoutManager by lazy {
@@ -36,18 +35,14 @@ class Kist(context: Context, attrs: AttributeSet) : RecyclerView(context, attrs)
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.kist, 0, 0).apply {
             layoutItem = getResourceId(R.styleable.kist_itemLayout, 0)
-            getResourceId(R.styleable.kist_headerLayout, 0).let {
-                if (it != 0) headerLayout = it
-            }
-            getResourceId(R.styleable.kist_footerLayout, 0).let {
-                if (it != 0) footerLayout = it
-            }
-            getResourceId(R.styleable.kist_emptyLayout, 0).let {
-                if (it != 0) emptyLayout = it
-            }
-             getResourceId(R.styleable.kist_loadingLayout, 0).let {
-                if (it != 0) loadingLayout = it
-            }
+            var layout = getResourceId(R.styleable.kist_headerLayout, 0)
+            if (layout != 0) headerLayout = layout
+            layout = getResourceId(R.styleable.kist_footerLayout, 0)
+            if (layout != 0) footerLayout = layout
+            layout = getResourceId(R.styleable.kist_emptyLayout, 0)
+            if (layout != 0) emptyLayout = layout
+            layout = getResourceId(R.styleable.kist_loadingLayout, 0)
+            if (layout != 0) loadingLayout = layout
             spanCount = getInteger(R.styleable.kist_spanCount, 2)
             isGrid = getBoolean(R.styleable.kist_isGrid, false)
         }
@@ -62,7 +57,8 @@ class Kist(context: Context, attrs: AttributeSet) : RecyclerView(context, attrs)
                 headerModifier = bindHeader,
                 footerLayout = footerLayout,
                 footerModifier = bindFooter,
-                loadingView = if(listWithLoading) loadingLayout else null,
+                listWithLoading = listWithLoading,
+                loadingView = loadingLayout,
                 loadingModifier = bindLoader,
                 emptyLayout = emptyLayout,
                 clickListener = onClickListener,
@@ -85,7 +81,8 @@ class Kist(context: Context, attrs: AttributeSet) : RecyclerView(context, attrs)
                 headerModifier = bindHeader,
                 footerLayout = footerLayout,
                 footerModifier = bindFooter,
-                loadingView = if(listWithLoading) loadingLayout else null,
+                listWithLoading = listWithLoading,
+                loadingView = loadingLayout,
                 loadingModifier = bindLoader,
                 emptyLayout = emptyLayout,
                 clickListener = onClickListener,

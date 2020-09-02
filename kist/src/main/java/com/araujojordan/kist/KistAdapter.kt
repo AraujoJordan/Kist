@@ -64,6 +64,7 @@ class KistAdapter<T>(
     private var endOfScroll: (() -> Unit)? = null,
     private var clickListener: ((item: T, position: Int, view: View) -> Unit)? = null,
     private var longClickListener: ((item: T, position: Int, view: View) -> Unit)? = null,
+    private var listWithLoading: Boolean = false,
     private var binding: ((T, itemView: View) -> Unit)?
 ) : RecyclerView.Adapter<KistAdapter<T>.ViewHolder>() {
 
@@ -281,7 +282,7 @@ class KistAdapter<T>(
 
     override fun getItemViewType(position: Int): Int {
         return when {
-            loadingView != null && isLoading && position == countHeader() + list.size -> TYPE.LOADING.ordinal
+            listWithLoading && loadingView != null && isLoading && position == countHeader() + list.size -> TYPE.LOADING.ordinal
             emptyLayout != null && !isLoading && list.isEmpty() && position == countHeader() -> TYPE.EMPTY.ordinal
             headerLayout != null && position == 0 -> TYPE.HEADER.ordinal
             footerLayout != null && position == list.size + countEmpty() + countHeader() -> TYPE.FOOTER.ordinal
