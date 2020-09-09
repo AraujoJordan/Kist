@@ -13,7 +13,7 @@ class Kist(context: Context, attrs: AttributeSet) : RecyclerView(context, attrs)
     private var headerLayout: Int? = null
     private var footerLayout: Int? = null
     private var loadingLayout: Int? = null
-    private var emptyLayout: Int = R.layout.kist_loading_item
+    private var emptyLayout: Int? = null
     var bindLayout: ((item: Any, view: View) -> Unit)? = null
     var bindHeader: ((headerView: View) -> Unit)? = null
     var bindFooter: ((headerView: View) -> Unit)? = null
@@ -24,6 +24,7 @@ class Kist(context: Context, attrs: AttributeSet) : RecyclerView(context, attrs)
     private var isGrid: Boolean = false
     private var spanCount: Int = 2
     var listWithLoading : Boolean = false
+
     private var adapter: KistAdapter<Any>? = null
 
     private val layoutManager by lazy {
@@ -102,7 +103,12 @@ class Kist(context: Context, attrs: AttributeSet) : RecyclerView(context, attrs)
 
     fun setLoading(isLoading: Boolean) = adapter?.setLoading(isLoading)
 
+    @Deprecated("Use .size get method instead")
     fun listSize() = adapter?.itemCount ?: 0
+
+    val size get() = adapter?.itemCount ?: 0
+
+    val isEmpty get() = adapter?.itemCount ?: 0 == 0
 
     fun updateLine(position: Int) = adapter?.updateLine(position)
 

@@ -10,9 +10,6 @@
         android:id="@+id/kistView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:emptyLayout="@layout/header"
-        app:footerLayout="@layout/header"
-        app:headerLayout="@layout/header"
         app:itemLayout="@layout/item" />
 
     <LinearLayout
@@ -55,7 +52,6 @@
             android:id="@+id/addKistButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="addMore"
             android:text="Add" />
     </LinearLayout>
 </FrameLayout>

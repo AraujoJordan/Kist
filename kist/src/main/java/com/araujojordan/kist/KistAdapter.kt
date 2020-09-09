@@ -1,6 +1,5 @@
 package com.araujojordan.kist
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -111,7 +110,6 @@ class KistAdapter<T>(
     }
 
     private fun getListHash(): Long {
-        Log.d("Kist", "getListHash()")
         var hash = 0L
         list.forEach { hash += it.hashCode() }
         return hash

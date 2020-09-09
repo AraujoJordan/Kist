@@ -1,7 +1,6 @@
 package com.araujojordan.kistexample
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_kist.*
 import kotlinx.android.synthetic.main.item.view.*
@@ -12,16 +11,13 @@ class KistActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_kist)
 
-        kistView.bindLayout = { item, view -> view.item_element.text = item as String }
+        kistView.bindLayout = { item, view -> view.item_element.text = item.toString()}
         kistView.onClickListener = { item, position, view ->  kistView.remove(position) }
-        kistView.onEndOfScroll = { kistView.add("more") }
+        kistView.onEndOfScroll = { addMore() }
+        kistView.add(1, 2, 3, 4, 5)
 
-        kistView.add("One", "Two", "Three", "Four", "Five")
-
+        addKistButton.setOnClickListener { addMore() }
     }
 
-    fun addMore(view: View) {
-        println("Add")
-        kistView.add("YOLOOO")
-    }
+    fun addMore() = kistView.add(kistView.size-1)
 }
