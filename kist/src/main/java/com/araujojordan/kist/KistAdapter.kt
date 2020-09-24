@@ -65,7 +65,7 @@ class KistAdapter<T>(
     private var clickListener: ((item: T, position: Int, view: View) -> Unit)? = null,
     private var longClickListener: ((item: T, position: Int, view: View) -> Unit)? = null,
     private var listWithLoading: Boolean = false,
-    private var itemId: ((item: T) -> Long)? = null,
+    private var itemId: ((item: T) -> Long?)? = null,
     private var binding: ((T, itemView: View) -> Unit)?
 ) : RecyclerView.Adapter<KistAdapter<T>.ViewHolder>() {
 
@@ -146,9 +146,13 @@ class KistAdapter<T>(
     fun filter(searchFor: (item: T) -> Boolean) = list.filter { searchFor(it) }
 
     override fun getItemId(position: Int): Long {
-        if (!hasStableIds() || itemId == null) return RecyclerView.NO_ID
-        getItemViewType(position).also { if (it != TYPE.ITEM.ordinal) return it.toLong() }
-        return itemId?.invoke(list[position]) ?: Random.nextLong()
+        return try {
+            if (!hasStableIds() || itemId == null) return RecyclerView.NO_ID
+            getItemViewType(position).also { if (it != TYPE.ITEM.ordinal) return it.toLong() }
+            itemId?.invoke(list[position]) ?: Random.nextLong()
+        } catch (err: Exception) {
+            Random.nextLong()
+        }
     }
 
 
