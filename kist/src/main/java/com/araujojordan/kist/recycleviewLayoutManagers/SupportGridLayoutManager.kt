@@ -17,31 +17,23 @@ class SupportGridLayoutManager : GridLayoutManager {
         attrs: AttributeSet?,
         defStyleAttr: Int,
         defStyleRes: Int,
-        stableId: Boolean = false
-    ) : super(context, attrs, defStyleAttr, defStyleRes) {
-        isItemPrefetchEnabled = stableId
-    }
+    ) : super(context, attrs, defStyleAttr, defStyleRes)
 
-    constructor(context: Context?, spanCount: Int, stableId: Boolean = false) : super(
+    constructor(context: Context?, spanCount: Int) : super(
         context, context?.resources?.getInteger(R.integer.ktlist_grid_rows) ?: spanCount
-    ) {
-        isItemPrefetchEnabled = stableId
-    }
+    )
 
     constructor(
         context: Context?,
         spanCount: Int,
         orientation: Int,
-        reverseLayout: Boolean,
-        stableId: Boolean = false
+        reverseLayout: Boolean
     ) : super(
         context,
         context?.resources?.getInteger(R.integer.ktlist_grid_rows) ?: spanCount,
         orientation,
         reverseLayout
-    ) {
-        isItemPrefetchEnabled = stableId
-    }
+    )
 
     override fun onLayoutChildren(
         recycler: Recycler,

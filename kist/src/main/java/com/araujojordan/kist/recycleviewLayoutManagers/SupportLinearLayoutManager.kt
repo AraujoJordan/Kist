@@ -11,30 +11,20 @@ import androidx.recyclerview.widget.RecyclerView.Recycler
  */
 class SupportLinearLayoutManager : LinearLayoutManager {
 
-    constructor(context: Context?, stableId: Boolean = false) : super(context) {
-        isItemPrefetchEnabled = stableId
-    }
+    constructor(context: Context?) : super(context)
 
     constructor(
         context: Context?,
         orientation: Int,
-        reverseLayout: Boolean,
-        stableId: Boolean = false
-    ) :
-            super(context, orientation, reverseLayout) {
-        isItemPrefetchEnabled = stableId
-    }
+        reverseLayout: Boolean
+    ) : super(context, orientation, reverseLayout)
 
     constructor(
         context: Context?,
         attrs: AttributeSet?,
         defStyleAttr: Int,
-        defStyleRes: Int,
-        stableId: Boolean = false
-    ) :
-            super(context, attrs, defStyleAttr, defStyleRes) {
-        isItemPrefetchEnabled = stableId
-    }
+        defStyleRes: Int
+    ) : super(context, attrs, defStyleAttr, defStyleRes)
 
     override fun onLayoutChildren(
         recycler: Recycler,

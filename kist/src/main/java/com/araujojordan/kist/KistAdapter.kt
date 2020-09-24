@@ -130,10 +130,13 @@ class KistAdapter<T>(
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         this.recycleView = recyclerView
-        if (recyclerView.layoutManager == null && layoutManager == null)
-            recyclerView.layoutManager =
-                SupportLinearLayoutManager(recyclerView.context, itemId != null)
+        if (recyclerView.layoutManager == null && layoutManager == null) {
+            recyclerView.layoutManager = SupportLinearLayoutManager(recyclerView.context)
+        }
         if (layoutManager != null) recyclerView.layoutManager = layoutManager
+
+        recyclerView.layoutManager?.isItemPrefetchEnabled = itemId != null
+
         if (endOfScroll != null) recyclerView.addOnScrollListener(endOfScrollListener)
     }
 
