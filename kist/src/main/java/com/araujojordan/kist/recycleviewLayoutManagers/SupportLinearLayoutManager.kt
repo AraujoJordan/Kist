@@ -1,6 +1,7 @@
 package com.araujojordan.kist.recycleviewLayoutManagers
 
 import android.content.Context
+import android.util.AttributeSet
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Recycler
@@ -8,10 +9,30 @@ import androidx.recyclerview.widget.RecyclerView.Recycler
 /**
  * Much safer LayoutManager than the original one
  */
-class SupportLinearLayoutManager(context: Context?, stableId: Boolean = false) :
-    LinearLayoutManager(context) {
+class SupportLinearLayoutManager : LinearLayoutManager {
 
-    init {
+    constructor(context: Context?, stableId: Boolean = false) : super(context) {
+        isItemPrefetchEnabled = stableId
+    }
+
+    constructor(
+        context: Context?,
+        orientation: Int,
+        reverseLayout: Boolean,
+        stableId: Boolean = false
+    ) :
+            super(context, orientation, reverseLayout) {
+        isItemPrefetchEnabled = stableId
+    }
+
+    constructor(
+        context: Context?,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int,
+        stableId: Boolean = false
+    ) :
+            super(context, attrs, defStyleAttr, defStyleRes) {
         isItemPrefetchEnabled = stableId
     }
 

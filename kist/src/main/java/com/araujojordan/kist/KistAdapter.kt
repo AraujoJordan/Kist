@@ -80,6 +80,7 @@ class KistAdapter<T>(
     //Copy the list so the outside list changes will not affect this one
     init {
         list = list.toMutableList()
+        setHasStableIds(itemId != null)
     }
 
     private var isLoading: Boolean = false
@@ -134,7 +135,6 @@ class KistAdapter<T>(
                 SupportLinearLayoutManager(recyclerView.context, itemId != null)
         if (layoutManager != null) recyclerView.layoutManager = layoutManager
         if (endOfScroll != null) recyclerView.addOnScrollListener(endOfScrollListener)
-        setHasStableIds(itemId != null)
     }
 
     fun getItemByIndex(index: Int) = list[index]
