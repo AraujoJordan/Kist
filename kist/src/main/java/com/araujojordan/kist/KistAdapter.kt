@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.araujojordan.kist.recycleviewLayoutManagers.SupportGridLayoutManager
 import com.araujojordan.kist.recycleviewLayoutManagers.SupportLinearLayoutManager
+import kotlin.random.Random
 
 /**
  * Designed and developed by Jordan Lira (@araujojordan)
@@ -64,6 +65,7 @@ class KistAdapter<T>(
     private var clickListener: ((item: T, position: Int, view: View) -> Unit)? = null,
     private var longClickListener: ((item: T, position: Int, view: View) -> Unit)? = null,
     private var listWithLoading: Boolean = false,
+    private var itemId: ((item: T) -> Long)? = null,
     private var binding: ((T, itemView: View) -> Unit)?
 ) : RecyclerView.Adapter<KistAdapter<T>.ViewHolder>() {
 
@@ -128,16 +130,23 @@ class KistAdapter<T>(
         super.onAttachedToRecyclerView(recyclerView)
         this.recycleView = recyclerView
         if (recyclerView.layoutManager == null && layoutManager == null)
-            recyclerView.layoutManager = SupportLinearLayoutManager(recyclerView.context)
+            recyclerView.layoutManager =
+                SupportLinearLayoutManager(recyclerView.context, itemId != null)
         if (layoutManager != null) recyclerView.layoutManager = layoutManager
-
         if (endOfScroll != null) recyclerView.addOnScrollListener(endOfScrollListener)
+        setHasStableIds(itemId != null)
     }
 
     fun getItemByIndex(index: Int) = list[index]
 
     fun first(searchFor: (item: T) -> Boolean) = list.firstOrNull { searchFor(it) }
     fun filter(searchFor: (item: T) -> Boolean) = list.filter { searchFor(it) }
+
+    override fun getItemId(position: Int): Long {
+        if (!hasStableIds() || itemId == null) return RecyclerView.NO_ID
+        getItemViewType(position).also { if (it != TYPE.ITEM.ordinal) return it.toLong() }
+        return itemId?.invoke(list[position]) ?: Random.nextLong()
+    }
 
 
     /**
